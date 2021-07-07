@@ -12,13 +12,13 @@ const users = {
     roles: ['admin'],
     introduction: 'I am a super administrator',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin',
+    userName: 'Super Admin',
   },
   'editor-token': {
     roles: ['editor'],
     introduction: 'I am an editor',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal Editor',
+    userName: 'Normal Editor',
   },
 };
 export default {
@@ -28,6 +28,7 @@ export default {
     const token = tokens[name];
     if (!token) {
       res.send({
+        success: false,
         code: 401,
         message: 'Account and password are incorrect.',
       });
@@ -42,16 +43,18 @@ export default {
     }, 1000);
   },
 
-  'GET /api/user/info:token': (req, res) => {
-    const { token } = req.params;
+  'GET /api/user/info': (req, res) => {
+    const { token } = req.query;
     const info = users[token];
 
     // mock error
     if (!info) {
       res.send({
+        success: false,
         code: 50008,
         message: 'Login failed, unable to get user details.',
       });
+      return;
     }
     res.send({
       success: true,

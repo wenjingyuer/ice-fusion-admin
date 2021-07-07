@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Input, Message, Form, Divider, Checkbox, Icon } from '@alifd/next';
 import { useInterval } from './utils';
-import { login } from '@/service/user';
-import { useRequest } from 'ahooks';
+import { useRequest, useBoolean } from 'ahooks';
+import { useSelector, useDispatch } from 'react-redux';
+import { useModelSelector, thunks } from '@/models/user';
 import styles from './index.module.scss';
 
 const { Item } = Form;
@@ -36,6 +37,7 @@ const LoginBlock: React.FunctionComponent<LoginProps> = (props = { dataSource: D
   const [isRunning, checkRunning] = useState(false);
   const [isPhone, checkPhone] = useState(false);
   const [second, setSecond] = useState(59);
+  const dispatch = useDispatch();
 
   useInterval(
     () => {
@@ -60,19 +62,22 @@ const LoginBlock: React.FunctionComponent<LoginProps> = (props = { dataSource: D
     checkRunning(true);
   };
 
-  const loginRequest = useRequest((values) => login(values), {
-    manual: true,
-    onSuccess: (res) => {
-      Message.success('登录成功');
-      return res.data;
-    },
-  });
+  const [loginState, loginActions] = useBoolean(false);
   const handleSubmit = (values: IDataSource, errors: []) => {
+    loginActions.setTrue();
     if (errors) {
       console.log('errors', errors);
       return;
     }
-    loginRequest.run(values);
+    dispatch(thunks.loginThunk(values))
+      .then((res) => {
+        if (res.payload) {
+          Message.success('登录成功');
+        }
+      })
+      .finally(() => {
+        loginActions.setFalse();
+      });
   };
 
   const phoneForm = (
@@ -173,7 +178,7 @@ const LoginBlock: React.FunctionComponent<LoginProps> = (props = { dataSource: D
 
           <Item style={{ marginBottom: 10 }}>
             <Form.Submit
-              loading={loginRequest.loading}
+              loading={loginState}
               type="primary"
               onClick={handleSubmit}
               className={styles.submitBtn}

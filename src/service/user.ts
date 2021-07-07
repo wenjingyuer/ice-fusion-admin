@@ -8,3 +8,11 @@ export const login = (data) => {
     data,
   });
 };
+
+export const getInfo = (data) => {
+  return request({
+    url: '/api/user/info',
+    method: 'get',
+    data,
+  });
+};

@@ -1,5 +1,5 @@
 import {
-  createStore,
+  configureStore,
   combineReducers,
   createSlice,
   Store,
@@ -64,7 +64,9 @@ interface ExtendStore extends Store {
 }
 
 // 创建顶级store
-export const store = createStore(globalReducer) as ExtendStore;
+export const store = configureStore({
+  reducer: globalReducer,
+}) as ExtendStore;
 
 // 创建注入 reducer 函数
 // 此函数添加 async reducer，并创建一个新的组合 reducer
