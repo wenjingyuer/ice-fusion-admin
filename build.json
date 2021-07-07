@@ -1,0 +1,11 @@
+{
+  "plugins": [
+    [
+      "build-plugin-fusion",
+      {
+        "themePackage": "@alifd/theme-design-pro"
+      }
+    ],
+    ["./setupProxy.js"]
+  ]
+}
