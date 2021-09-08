@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Input, Message, Form, Divider, Checkbox, Icon } from '@alifd/next';
 import { useInterval } from './utils';
-import { useRequest, useBoolean } from 'ahooks';
-import { useSelector, useDispatch } from 'react-redux';
-import { useModelSelector, thunks } from '@/models/user';
+import { useBoolean } from 'ahooks';
+import { useDispatch } from 'react-redux';
+import { thunks } from '@/models/user';
+import { getSearchParams } from 'ice';
 import styles from './index.module.scss';
 
 const { Item } = Form;
@@ -33,7 +34,6 @@ const LoginBlock: React.FunctionComponent<LoginProps> = (props = { dataSource: D
   const { dataSource = DEFAULT_DATA } = props;
 
   const [postData, setValue] = useState(dataSource);
-
   const [isRunning, checkRunning] = useState(false);
   const [isPhone, checkPhone] = useState(false);
   const [second, setSecond] = useState(59);
@@ -73,6 +73,10 @@ const LoginBlock: React.FunctionComponent<LoginProps> = (props = { dataSource: D
       .then((res) => {
         if (res.payload) {
           Message.success('登录成功');
+          const { redirect } = getSearchParams();
+          const { origin } = window.location;
+          // 因为在初始化路由在ice runApp 中完成，所以登陆后需要刷新页面
+          window.open(`${origin}${(redirect as string) || '/'}`, '_self');
         }
       })
       .finally(() => {

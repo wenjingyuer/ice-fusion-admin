@@ -1,24 +1,29 @@
-import { IRouterConfig } from 'ice';
+import { ICustomRouterConfig } from '@/types';
 import BasicLayout from '@/layouts/BasicLayout';
 import Workplace from '@/pages/Workplace';
 import FeedbackNotFound from '@/pages/FeedbackNotFound';
 import Provider from '@/components/Provider';
+import AuthWrapper from '@/components/AuthWrapper';
 
 // 业务路由
 import userRoutes from './routes.user';
 
-const routerConfig: IRouterConfig[] = [
+const routerConfig: ICustomRouterConfig[] = [
   ...userRoutes,
   {
     path: '/',
-    component: Provider(BasicLayout),
+    component: BasicLayout,
+    wrappers: [AuthWrapper, Provider],
     children: [
       {
         path: '/dashboard/workplace',
+        exact: true,
         component: Workplace,
+        roles: ['admin'],
       },
       {
         path: '/',
+        exact: true,
         redirect: '/dashboard/workplace',
       },
       {

@@ -12,6 +12,7 @@
     "ahooks": "^2.10.6",
     "bizcharts": "^4.1.10",
     "net": "^1.0.2",
+    "nprogress": "^0.2.0",
     "numeral": "^2.0.6",
     "react": "^16.4.1",
     "react-dom": "^16.4.1"

@@ -1,21 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import createModelSelector from '@/utils/createModelSelector';
 import { login, getInfo } from '@/service/user';
-
-export interface IUserInfo {
-  token?: string;
-  userId?: string;
-  userName?: string;
-  roles?: string[];
-  avatar?: URL;
-  [key: string]: any;
+import { setToken, getToken } from '@/utils/auth';
+import { IUserInfo } from '@/types';
+interface IGetState {
+  user: IUserInfo;
 }
 const INITIAL_STATE = {
-  token: null,
+  token: getToken(),
   userId: null,
   userName: null,
   roles: [],
   avatar: null,
+  ...(window as any).useInfo,
 };
 
 // 以页面为数据模型分片粒度，即 page view model
@@ -26,12 +23,14 @@ const userSlice = createSlice({
   // 文档参考 https://redux-toolkit.js.org/api/createSlice
   reducers: {
     setToken: (state, action) => {
+      setToken(action.payload);
       return {
         ...state,
         token: action.payload,
       };
     },
     setUserInfo: (state, action) => {
+      console.log(action);
       return {
         ...state,
         ...action.payload,
@@ -56,15 +55,15 @@ export const thunks: {
     // await只能捕获resolve的内容
     if (!res) return;
     const { data } = res;
-    // 登陆成功后根据token获取用户信息
-    thunkAPI.dispatch(thunks.getUserInfoThunk(data));
     thunkAPI.dispatch(actions.setToken(data.token));
     // 在使用时，dispatch的then回调参数中可以获取res
     // 如果没有return 或者发生错误，则获取到res.payload = undefined
     return res;
   }),
   getUserInfoThunk: createAsyncThunk('user/getInfo', async (params: any, thunkAPI) => {
-    const res = await getInfo(params);
+    const { user } = thunkAPI.getState() as IGetState;
+    const { token } = user;
+    const res = await getInfo({ token });
     const { data } = res;
     thunkAPI.dispatch(actions.setUserInfo(data));
     return res;
