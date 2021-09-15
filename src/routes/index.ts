@@ -20,6 +20,7 @@ const routerConfig: ICustomRouterConfig[] = [
         exact: true,
         component: Workplace,
         roles: ['admin'],
+        title: '工作台',
       },
       {
         path: '/',

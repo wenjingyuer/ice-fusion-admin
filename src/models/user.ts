@@ -30,7 +30,6 @@ const userSlice = createSlice({
       };
     },
     setUserInfo: (state, action) => {
-      console.log(action);
       return {
         ...state,
         ...action.payload,

@@ -163,6 +163,15 @@ const LoginBlock: React.FunctionComponent<LoginProps> = (props = { dataSource: D
             手机号登录
           </span>
         </div>
+        <div className={styles.desc}>
+          <span>
+            用户名：admin/editor
+          </span>
+          <Divider direction="ver" />
+          <span >
+            密码：长度大于6
+          </span>
+        </div>
 
         <Form value={postData} onChange={formChange} size="large">
           {isPhone ? phoneForm : accountForm}
